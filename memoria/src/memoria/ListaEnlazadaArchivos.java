@@ -11,41 +11,40 @@ import java.io.File;
  * @author alira
  */
 public class ListaEnlazadaArchivos {
-    
+
     private NodoArchivo cabeza;
     private int tamanio;
-    
+
     public ListaEnlazadaArchivos(){
-        cabeza = null;
+        cabeza=null;
         tamanio=0;
     }
-    
+
     public void agregar(ElementoArchivo elemento){
-        NodoArchivo nuevoNodo= new NodoArchivo(elemento);
-        if( cabeza==null){
-            cabeza = nuevoNodo;
-        }
-        else{
-            NodoArchivo actual= cabeza;
+        NodoArchivo nuevoNodo=new NodoArchivo(elemento);
+        if(cabeza==null){
+            cabeza=nuevoNodo;
+        }else{
+            NodoArchivo actual=cabeza;
             while(actual.siguiente!=null){
-                actual = actual.siguiente;
+                actual=actual.siguiente;
             }
-            actual.siguiente= nuevoNodo;
+            actual.siguiente=nuevoNodo;
         }
         tamanio++;
     }
-    
+
     public void agregarAlInicio(ElementoArchivo elemento){
-        NodoArchivo nuevoNodo= new NodoArchivo(elemento);
+        NodoArchivo nuevoNodo=new NodoArchivo(elemento);
         nuevoNodo.siguiente=cabeza;
         cabeza=nuevoNodo;
         tamanio++;
     }
-    
+
     public ElementoArchivo obtener(int indice){
         if(indice<0||indice>=tamanio){
-           throw new IndexOutOfBoundsException(
-           "Indice"+indice+"fuera de rango. Tamaño:"+tamanio); 
+            throw new IndexOutOfBoundsException(
+                "Índice "+indice+" fuera de rango. Tamaño: "+tamanio);
         }
         NodoArchivo actual=cabeza;
         for(int posicion=0;posicion<indice;posicion++){
@@ -53,25 +52,24 @@ public class ListaEnlazadaArchivos {
         }
         return actual.elemento;
     }
-    
+
     public void eliminar(int indice){
         if(indice<0||indice>=tamanio){
             throw new IndexOutOfBoundsException(
-            "Indice"+indice+"fuera de rango.Tamaño:"+tamanio);
+                "Índice "+indice+" fuera de rango. Tamaño: "+tamanio);
         }
         if(indice==0){
             cabeza=cabeza.siguiente;
-        }
-        else{
+        }else{
             NodoArchivo anterior=cabeza;
             for(int posicion=0;posicion<indice-1;posicion++){
                 anterior=anterior.siguiente;
             }
             anterior.siguiente=anterior.siguiente.siguiente;
         }
-        tamanio++;
+        tamanio--;
     }
-    
+
     public boolean estaVacia(){ return tamanio==0; }
     public int getTamanio(){ return tamanio; }
 
@@ -92,7 +90,7 @@ public class ListaEnlazadaArchivos {
             agregar(ElementoArchivo.desdeFile(archivo));
         }
     }
-    
+
     public ElementoArchivo[] aArreglo(){
         ElementoArchivo[] arreglo=new ElementoArchivo[tamanio];
         NodoArchivo actual=cabeza;
