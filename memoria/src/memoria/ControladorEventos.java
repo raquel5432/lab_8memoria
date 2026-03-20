@@ -146,8 +146,7 @@ public class ControladorEventos {
 
     private void alOrganizar(){
         if(carpetaActual==null){
-            ventana.getBarraEstado()
-                .setMensaje("Selecciona primero una carpeta para organizar.");
+            ventana.getBarraEstado().setMensaje("Selecciona primero una carpeta para organizar.");
             return;
         }
         int confirmacion=JOptionPane.showConfirmDialog(
@@ -159,56 +158,36 @@ public class ControladorEventos {
             JOptionPane.QUESTION_MESSAGE
         );
         if(confirmacion!=JOptionPane.YES_OPTION){ return; }
-        ResultadoOperacion resultado=
-            organizadorArchivos.organizarCarpeta(carpetaActual);
+        ResultadoOperacion resultado=organizadorArchivos.organizarCarpeta(carpetaActual);
         ventana.getBarraEstado().setMensaje(resultado.getMensaje());
         if(!resultado.fueExitoso()){
-            JOptionPane.showMessageDialog(
-                ventana,
-                resultado.getMensaje(),
-                "Organizar",
-                JOptionPane.INFORMATION_MESSAGE
-            );
+            JOptionPane.showMessageDialog(ventana,resultado.getMensaje(),"Organizar",JOptionPane.INFORMATION_MESSAGE);
         }
         navegarACarpeta(carpetaActual);
     }
 
     private void alRenombrar(){
-        ElementoArchivo seleccionado=
-            ventana.getPanelContenido().obtenerElementoSeleccionado();
+        ElementoArchivo seleccionado=ventana.getPanelContenido().obtenerElementoSeleccionado();
         if(seleccionado==null){
-            ventana.getBarraEstado()
-                .setMensaje("Selecciona un elemento para renombrar.");
+            ventana.getBarraEstado().setMensaje("Selecciona un elemento para renombrar.");
             return;
         }
         String rutaActual=seleccionado.getRutaCompleta();
         if(rutaActual==null||rutaActual.trim().isEmpty()){
-            ventana.getBarraEstado()
-                .setMensaje("No se pudo obtener la ruta del elemento.");
+            ventana.getBarraEstado().setMensaje("No se pudo obtener la ruta del elemento.");
             return;
         }
-        String nuevoNombre=JOptionPane.showInputDialog(
-            ventana,
-            "Nuevo nombre para \""+seleccionado.getNombre()+"\":",
-            "Renombrar",
-            JOptionPane.PLAIN_MESSAGE
-        );
-        // null: usuario canceló
-        if(nuevoNombre==null){ return; }
-        // Vacío o solo espacios: error de validación visible
+        String nuevoNombre=JOptionPane.showInputDialog(ventana,"Nuevo nombre para \""+seleccionado.getNombre()+"\":","Renombrar",JOptionPane.PLAIN_MESSAGE);
+        if(nuevoNombre==null){ 
+            return; 
+        }
         if(nuevoNombre.trim().isEmpty()){
-            JOptionPane.showMessageDialog(
-                ventana,
-                "El nuevo nombre no puede estar vacío ni contener solo espacios.",
-                "Nombre inválido",
-                JOptionPane.WARNING_MESSAGE
+            JOptionPane.showMessageDialog(ventana,"El nuevo nombre no puede estar vacío ni contener solo espacios.","Nombre invalido",JOptionPane.WARNING_MESSAGE
             );
             return;
         }
         File elementoFile=new File(rutaActual);
-        ResultadoOperacion resultado=
-            gestorArchivos.renombrarElemento(
-                elementoFile,nuevoNombre.trim());
+        ResultadoOperacion resultado=gestorArchivos.renombrarElemento(elementoFile,nuevoNombre.trim());
         ventana.getBarraEstado().setMensaje(resultado.getMensaje());
         if(!resultado.fueExitoso()){
             JOptionPane.showMessageDialog(
@@ -223,11 +202,9 @@ public class ControladorEventos {
     }
 
     private void alCopiar(){
-        List<ElementoArchivo> seleccionados=
-            ventana.getPanelContenido().obtenerElementosSeleccionados();
+        List<ElementoArchivo> seleccionados=ventana.getPanelContenido().obtenerElementosSeleccionados();
         if(seleccionados.isEmpty()){
-            ventana.getBarraEstado()
-                .setMensaje("Selecciona al menos un elemento para copiar.");
+            ventana.getBarraEstado().setMensaje("Selecciona al menos un elemento para copiar.");
             return;
         }
         List<File> archivosParaCopiar=new ArrayList<>();
@@ -238,30 +215,24 @@ public class ControladorEventos {
             }
         }
         if(archivosParaCopiar.isEmpty()){
-            ventana.getBarraEstado()
-                .setMensaje("No se pudo obtener la ruta de los elementos seleccionados.");
+            ventana.getBarraEstado().setMensaje("No se pudo obtener la ruta de los elementos seleccionados.");
             return;
         }
-        ResultadoOperacion resultado=
-            gestorArchivos.copiarElementos(archivosParaCopiar);
+        ResultadoOperacion resultado=gestorArchivos.copiarElementos(archivosParaCopiar);
         ventana.getBarraEstado().setMensaje(resultado.getMensaje());
-        ventana.getBarraHerramientas()
-            .setBotonPegarHabilitado(portapapeles.tieneContenido());
+        ventana.getBarraHerramientas().setBotonPegarHabilitado(portapapeles.tieneContenido());
     }
 
     private void alPegar(){
         if(carpetaActual==null){
-            ventana.getBarraEstado()
-                .setMensaje("Navega a una carpeta destino antes de pegar.");
+            ventana.getBarraEstado().setMensaje("Navega a una carpeta destino antes de pegar.");
             return;
         }
         if(!portapapeles.tieneContenido()){
-            ventana.getBarraEstado()
-                .setMensaje("El portapapeles está vacío. Copia elementos primero.");
+            ventana.getBarraEstado().setMensaje("El portapapeles está vacío. Copia elementos primero.");
             return;
         }
-        ResultadoOperacion resultado=
-            gestorArchivos.pegarElementos(carpetaActual);
+        ResultadoOperacion resultado=gestorArchivos.pegarElementos(carpetaActual);
         ventana.getBarraEstado().setMensaje(resultado.getMensaje());
         if(resultado.fueExitoso()){
             navegarACarpeta(carpetaActual);
@@ -271,12 +242,14 @@ public class ControladorEventos {
     private void alOrdenar(){
         String criterio=
             ventana.getBarraHerramientas().getCriterioOrdenSeleccionado();
-        if(criterio.isEmpty()){ return; }
+        if(criterio.isEmpty()){ 
+            return; 
+        }
         ElementoArchivo[] elementosActuales=
-            ventana.getPanelContenido()
-                   .getModeloTabla()
-                   .obtenerTodosLosElementos();
-        if(elementosActuales==null||elementosActuales.length==0){ return; }
+            ventana.getPanelContenido().getModeloTabla().obtenerTodosLosElementos();
+        if(elementosActuales==null||elementosActuales.length==0){ 
+            return; 
+        }
         ListaEnlazadaArchivos listaParaOrdenar=new ListaEnlazadaArchivos();
         for(ElementoArchivo elemento:elementosActuales){
             listaParaOrdenar.agregar(elemento);
@@ -292,8 +265,7 @@ public class ControladorEventos {
                 OrdenadorArchivo.ordenarPorTamanio(listaParaOrdenar);
             default -> {}
         }
-        ventana.getPanelContenido()
-               .cargarElementos(listaParaOrdenar.aArreglo());
+        ventana.getPanelContenido().cargarElementos(listaParaOrdenar.aArreglo());
         ventana.getBarraEstado().setMensaje("Ordenado por: "+criterio);
         ventana.getBarraHerramientas().resetearComboOrden();
     }
