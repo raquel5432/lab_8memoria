@@ -10,4 +10,12 @@ package memoria;
  */
 public class NodoArchivo {
     
+    ElementoArchivo elemento;
+    NodoArchivo siguente;
+    
+    public NodoArchivo(ElementoArchivo elemento){
+        this.elemento = elemento;
+        this.siguente = null;
+    }
+    
 }
