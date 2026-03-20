@@ -42,6 +42,15 @@ public class OrdenadorArchivo {
         lista.setCabeza(mergeSort(lista.getCabeza(),porTipo));          
     }
     
+    public static void ordenarPorTamanio(ListaEnlazadaArchivos lista){
+        if(lista.estaVacia()||lista.getTamanio()==1){ return; }
+        Comparator<ElementoArchivo> porTamanio=
+            (primero,segundo)->
+                Long.compare(primero.getTamanoEnBytes(),
+                             segundo.getTamanoEnBytes());
+        lista.setCabeza(mergeSort(lista.getCabeza(),porTamanio));
+    }
+    
     private static NodoArchivo mergeSort(NodoArchivo cabeza,
                                           Comparator<ElementoArchivo> comparador){
         if(cabeza==null||cabeza.siguiente==null){ return cabeza; }
