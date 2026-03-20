@@ -62,25 +62,17 @@ public class ControladorEventos {
     }
 
     private void conectarBotones(){
-        ventana.getBarraHerramientas()
-            .agregarListenerCrearCarpeta(e->alCrearCarpeta());
-        ventana.getBarraHerramientas()
-            .agregarListenerOrganizar(e->alOrganizar());
-        ventana.getBarraHerramientas()
-            .agregarListenerRenombrar(e->alRenombrar());
-        ventana.getBarraHerramientas()
-            .agregarListenerCopiar(e->alCopiar());
-        ventana.getBarraHerramientas()
-            .agregarListenerPegar(e->alPegar());
-        ventana.getBarraHerramientas()
-            .agregarListenerSubirNivel(e->alSubirNivel());
-        ventana.getBarraHerramientas()
-            .agregarListenerOrdenar(e->alOrdenar());
+        ventana.getBarraHerramientas().agregarListenerCrearCarpeta(e->alCrearCarpeta());
+        ventana.getBarraHerramientas().agregarListenerOrganizar(e->alOrganizar());
+        ventana.getBarraHerramientas().agregarListenerRenombrar(e->alRenombrar());
+        ventana.getBarraHerramientas().agregarListenerCopiar(e->alCopiar());
+        ventana.getBarraHerramientas().agregarListenerPegar(e->alPegar());
+        ventana.getBarraHerramientas().agregarListenerSubirNivel(e->alSubirNivel());
+        ventana.getBarraHerramientas().agregarListenerOrdenar(e->alOrdenar());
     }
 
     private void conectarDobleClickTabla(){
-        ventana.getPanelContenido().agregarListenerDobleClick(
-            new MouseAdapter(){
+        ventana.getPanelContenido().agregarListenerDobleClick(new MouseAdapter(){
                 @Override
                 public void mouseClicked(MouseEvent evento){
                     if(evento.getClickCount()==2){
@@ -93,30 +85,23 @@ public class ControladorEventos {
 
     private void navegarACarpeta(File carpeta){
         carpetaActual=carpeta;
-        ListaEnlazadaArchivos contenido=
-            gestorArchivos.listarContenido(carpeta);
+        ListaEnlazadaArchivos contenido=gestorArchivos.listarContenido(carpeta);
         ElementoArchivo[] elementos=contenido.aArreglo();
         ventana.getPanelContenido().cargarElementos(elementos);
-        ventana.getBarraHerramientas()
-            .setRutaActual(carpeta.getAbsolutePath());
-        ventana.getBarraEstado()
-            .setMensaje("Carpeta: "+carpeta.getName());
+        ventana.getBarraHerramientas().setRutaActual(carpeta.getAbsolutePath());
+        ventana.getBarraEstado().setMensaje("Carpeta: "+carpeta.getName());
         ventana.getBarraEstado().setConteo(elementos.length);
-        ventana.getBarraHerramientas()
-            .setBotonPegarHabilitado(portapapeles.tieneContenido());
+        ventana.getBarraHerramientas().setBotonPegarHabilitado(portapapeles.tieneContenido());
     }
 
     private void alAbrirElementoSeleccionado(){
-        ElementoArchivo seleccionado=
-            ventana.getPanelContenido().obtenerElementoSeleccionado();
+        ElementoArchivo seleccionado=ventana.getPanelContenido().obtenerElementoSeleccionado();
         if(seleccionado==null){ return; }
         if(seleccionado.esDirectorio()){
             File subcarpeta=new File(seleccionado.getRutaCompleta());
             navegarACarpeta(subcarpeta);
         }else{
-            ventana.getBarraEstado().setMensaje(
-                "Archivo: "+seleccionado.getNombre()
-                +" ("+seleccionado.getTamanoLegible()+")");
+            ventana.getBarraEstado().setMensaje("Archivo: "+seleccionado.getNombre()+" ("+seleccionado.getTamanoLegible()+")");
         }
     }
 
@@ -126,8 +111,7 @@ public class ControladorEventos {
         if(carpetaPadre!=null&&carpetaPadre.isDirectory()){
             navegarACarpeta(carpetaPadre);
         }else{
-            ventana.getBarraEstado()
-                .setMensaje("Ya estás en la raíz del sistema.");
+            ventana.getBarraEstado().setMensaje("Ya estás en la raíz del sistema.");
         }
     }
 
@@ -143,14 +127,21 @@ public class ControladorEventos {
             "Crear carpeta",
             JOptionPane.PLAIN_MESSAGE
         );
-        if(nombreNuevo==null||nombreNuevo.trim().isEmpty()){ return; }
+        if(nombreNuevo==null){ 
+            return; }
+        if(nombreNuevo.trim().isEmpty()){
+            JOptionPane.showMessageDialog(ventana,"El nombre no puede estar vacío ni contener solo espacios.","Nombre inválido",JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         ResultadoOperacion resultado=
             gestorArchivos.crearCarpeta(carpetaActual,nombreNuevo.trim());
         ventana.getBarraEstado().setMensaje(resultado.getMensaje());
-        if(resultado.fueExitoso()){
-            ventana.getPanelArbol().refrescarNodoSeleccionado();
-            navegarACarpeta(carpetaActual);
+        if(!resultado.fueExitoso()){
+            JOptionPane.showMessageDialog(ventana,resultado.getMensaje(),"No se pudo crear la carpeta",JOptionPane.WARNING_MESSAGE);
+            return;
         }
+        ventana.getPanelArbol().refrescarNodoSeleccionado();
+        navegarACarpeta(carpetaActual);
     }
 
     private void alOrganizar(){
@@ -171,9 +162,15 @@ public class ControladorEventos {
         ResultadoOperacion resultado=
             organizadorArchivos.organizarCarpeta(carpetaActual);
         ventana.getBarraEstado().setMensaje(resultado.getMensaje());
-        if(resultado.fueExitoso()){
-            navegarACarpeta(carpetaActual);
+        if(!resultado.fueExitoso()){
+            JOptionPane.showMessageDialog(
+                ventana,
+                resultado.getMensaje(),
+                "Organizar",
+                JOptionPane.INFORMATION_MESSAGE
+            );
         }
+        navegarACarpeta(carpetaActual);
     }
 
     private void alRenombrar(){
@@ -196,15 +193,33 @@ public class ControladorEventos {
             "Renombrar",
             JOptionPane.PLAIN_MESSAGE
         );
-        if(nuevoNombre==null||nuevoNombre.trim().isEmpty()){ return; }
+        // null: usuario canceló
+        if(nuevoNombre==null){ return; }
+        // Vacío o solo espacios: error de validación visible
+        if(nuevoNombre.trim().isEmpty()){
+            JOptionPane.showMessageDialog(
+                ventana,
+                "El nuevo nombre no puede estar vacío ni contener solo espacios.",
+                "Nombre inválido",
+                JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
         File elementoFile=new File(rutaActual);
         ResultadoOperacion resultado=
             gestorArchivos.renombrarElemento(
                 elementoFile,nuevoNombre.trim());
         ventana.getBarraEstado().setMensaje(resultado.getMensaje());
-        if(resultado.fueExitoso()&&carpetaActual!=null){
-            navegarACarpeta(carpetaActual);
+        if(!resultado.fueExitoso()){
+            JOptionPane.showMessageDialog(
+                ventana,
+                resultado.getMensaje(),
+                "No se pudo renombrar",
+                JOptionPane.WARNING_MESSAGE
+            );
+            return;
         }
+        navegarACarpeta(carpetaActual);
     }
 
     private void alCopiar(){
@@ -283,4 +298,3 @@ public class ControladorEventos {
         ventana.getBarraHerramientas().resetearComboOrden();
     }
 }
-
