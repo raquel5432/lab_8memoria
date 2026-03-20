@@ -9,24 +9,22 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 public class VentanaPrincipal extends JFrame {
-    private PanelArbolArchivos panelArbol;
-    private PanelContenidoArchivos panelContenido;
-    private BarraHerramientasArchivos barraHerramientas;
-    private BarraEstado barraEstado;
+
+    private final PanelArbolArchivos panelArbol;
+    private final PanelContenidoArchivos panelContenido;
+    private final BarraHerramientasArchivos barraHerramientas;
+    private final BarraEstado barraEstado;
 
     public VentanaPrincipal(){
         super("Explorador de Archivos");
-        inicializarComponentes();
-        configurarLayout();
-        configurarVentana();
-        new ControladorEventos(this);
-    }
-
-    private void inicializarComponentes(){
         panelArbol=new PanelArbolArchivos();
         panelContenido=new PanelContenidoArchivos();
         barraHerramientas=new BarraHerramientasArchivos();
         barraEstado=new BarraEstado();
+        configurarLayout();
+        configurarVentana();
+        new ControladorEventos(this);
+        setVisible(true);
     }
 
     private void configurarLayout(){
@@ -40,9 +38,9 @@ public class VentanaPrincipal extends JFrame {
         splitPane.setContinuousLayout(true);
         splitPane.setBorder(BorderFactory.createEmptyBorder());
         getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(barraHerramientas, BorderLayout.NORTH);
-        getContentPane().add(splitPane, BorderLayout.CENTER);
-        getContentPane().add(barraEstado, BorderLayout.SOUTH);
+        getContentPane().add(barraHerramientas,BorderLayout.NORTH);
+        getContentPane().add(splitPane,BorderLayout.CENTER);
+        getContentPane().add(barraEstado,BorderLayout.SOUTH);
     }
 
     private void configurarVentana(){
@@ -55,19 +53,10 @@ public class VentanaPrincipal extends JFrame {
                 UIManager.getSystemLookAndFeelClassName());
             SwingUtilities.updateComponentTreeUI(this);
         }catch(Exception ignorado){}
-        setVisible(true);
     }
 
-    public PanelArbolArchivos getPanelArbol(){
-        return panelArbol;
-    }
-    public PanelContenidoArchivos getPanelContenido(){
-        return panelContenido;
-    }
-    public BarraHerramientasArchivos getBarraHerramientas(){
-        return barraHerramientas;
-    }
-    public BarraEstado getBarraEstado(){
-        return barraEstado;
-    }
+    public PanelArbolArchivos getPanelArbol(){ return panelArbol; }
+    public PanelContenidoArchivos getPanelContenido(){ return panelContenido; }
+    public BarraHerramientasArchivos getBarraHerramientas(){ return barraHerramientas; }
+    public BarraEstado getBarraEstado(){ return barraEstado; }
 }

@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 public class BarraHerramientasArchivos extends JPanel {
+
     private final JTextField campoRutaActual;
     private final JButton botonCrearCarpeta;
     private final JButton botonOrganizar;
@@ -25,18 +26,24 @@ public class BarraHerramientasArchivos extends JPanel {
     private final JButton botonPegar;
     private final JButton botonSubirNivel;
     private final JComboBox<String> comboOrdenar;
-    
-    private static final String[] CRITERIOS_ORDEN={"Ordenar por... ", "Nombre", "Fecha", "Tipo", "Tamano"};
-    
+
+    private static final String[] CRITERIOS_ORDEN={
+        "Ordenar por...","Nombre","Fecha","Tipo","Tamaño"
+    };
+
     public BarraHerramientasArchivos(){
         setLayout(new BorderLayout(4,0));
-        setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0,0,1,0,Color.GRAY), BorderFactory.createEmptyBorder(4,6,4,6)));
-        botonSubirNivel=crearBoton("↑ Subir", "Ir a la carpeta superior");
-        botonCrearCarpeta=crearBoton("+ Carpeta", "Crear nueva carpeta");
+        setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0,0,1,0,Color.GRAY),
+            BorderFactory.createEmptyBorder(4,6,4,6)
+        ));
+        botonSubirNivel=crearBoton("↑ Subir","Ir a la carpeta superior");
+        botonCrearCarpeta=crearBoton("+ Carpeta","Crear nueva carpeta");
         botonOrganizar=crearBoton("Organizar","Organizar archivos por tipo");
-        botonRenombrar=crearBoton("Renombrar", "Renombrar el elemento seleccionado");
-        botonCopiar=crearBoton("Copiar", "Copiar elementos seleccionados");
-        botonPegar=crearBoton("Pegar", "Pegar elementos copiados");
+        botonRenombrar=crearBoton("Renombrar","Renombrar el elemento seleccionado");
+        botonCopiar=crearBoton("Copiar","Copiar elementos seleccionados");
+        botonPegar=crearBoton("Pegar","Pegar elementos copiados");
+        botonPegar.setEnabled(false);
         comboOrdenar=new JComboBox<>(CRITERIOS_ORDEN);
         comboOrdenar.setToolTipText("Ordenar contenido");
         comboOrdenar.setMaximumSize(new Dimension(130,26));
@@ -60,15 +67,15 @@ public class BarraHerramientasArchivos extends JPanel {
         etiquetaRuta.setFont(etiquetaRuta.getFont().deriveFont(Font.BOLD,12f));
         campoRutaActual=new JTextField();
         campoRutaActual.setEditable(false);
-        campoRutaActual.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        campoRutaActual.setBackground(new Color(245, 245, 245));
-        panelRuta.add(etiquetaRuta, BorderLayout.WEST);
-        panelRuta.add(campoRutaActual, BorderLayout.CENTER);
-        add(panelBotones, BorderLayout.NORTH);
-        add(panelRuta, BorderLayout.SOUTH);
+        campoRutaActual.setFont(new Font(Font.MONOSPACED,Font.PLAIN,12));
+        campoRutaActual.setBackground(new Color(245,245,245));
+        panelRuta.add(etiquetaRuta,BorderLayout.WEST);
+        panelRuta.add(campoRutaActual,BorderLayout.CENTER);
+        add(panelBotones,BorderLayout.NORTH);
+        add(panelRuta,BorderLayout.SOUTH);
     }
-    
-    private JButton crearBoton(String texto, String tooltip){
+
+    private JButton crearBoton(String texto,String tooltip){
         JButton boton=new JButton(texto);
         boton.setToolTipText(tooltip);
         boton.setFocusPainted(false);
@@ -76,52 +83,42 @@ public class BarraHerramientasArchivos extends JPanel {
         boton.setMargin(new Insets(2,8,2,8));
         return boton;
     }
-    
+
     public void setRutaActual(String ruta){
         campoRutaActual.setText(ruta!=null?ruta:"");
     }
-    
     public String getRutaActual(){
         return campoRutaActual.getText();
     }
-    
-    public void agregarListenerCrearCarpeta(ActionListener listener){
-       botonCrearCarpeta.addActionListener(listener);
+    public void agregarListenerCrearCarpeta(ActionListener l){
+        botonCrearCarpeta.addActionListener(l);
     }
-    
-    public void agregarListenerOrganizar(ActionListener listener){
-        botonOrganizar.addActionListener(listener);
+    public void agregarListenerOrganizar(ActionListener l){
+        botonOrganizar.addActionListener(l);
     }
-    
-    public void agregarListenerRenombrar(ActionListener listener){
-        botonRenombrar.addActionListener(listener);
+    public void agregarListenerRenombrar(ActionListener l){
+        botonRenombrar.addActionListener(l);
     }
-    
-    public void agregarListenerCopiar(ActionListener listener){
-        botonCopiar.addActionListener(listener);
+    public void agregarListenerCopiar(ActionListener l){
+        botonCopiar.addActionListener(l);
     }
-    
-    public void agregarListenerPegar(ActionListener listener){
-        botonPegar.addActionListener(listener);
+    public void agregarListenerPegar(ActionListener l){
+        botonPegar.addActionListener(l);
     }
-    
-    public void agregarListenerSubirNivel(ActionListener listener){
-        botonSubirNivel.addActionListener(listener);
+    public void agregarListenerSubirNivel(ActionListener l){
+        botonSubirNivel.addActionListener(l);
     }
-    
-    public void agregarListenerOrdenar(ActionListener listener){
-        comboOrdenar.addActionListener(listener);
+    public void agregarListenerOrdenar(ActionListener l){
+        comboOrdenar.addActionListener(l);
     }
-    
     public String getCriterioOrdenSeleccionado(){
         String seleccion=(String)comboOrdenar.getSelectedItem();
-        return (seleccion!=null&&!seleccion.equals("Ordenar por..."))?seleccion:"";
+        return (seleccion!=null&&!seleccion.equals("Ordenar por..."))
+            ?seleccion:"";
     }
-    
     public void resetearComboOrden(){
         comboOrdenar.setSelectedIndex(0);
     }
-    
     public void setBotonPegarHabilitado(boolean habilitado){
         botonPegar.setEnabled(habilitado);
     }
