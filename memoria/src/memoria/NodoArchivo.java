@@ -11,11 +11,11 @@ package memoria;
 public class NodoArchivo {
     
     ElementoArchivo elemento;
-    NodoArchivo siguente;
+    NodoArchivo siguiente;
     
     public NodoArchivo(ElementoArchivo elemento){
         this.elemento = elemento;
-        this.siguente = null;
+        this.siguiente = null;
     }
     
 }
